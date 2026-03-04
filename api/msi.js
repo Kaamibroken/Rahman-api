@@ -117,24 +117,28 @@ function fixNumbers(data) {
 
 /* ================= FIX SMS ================= */
 
-async function getSMS() {
-  if (!cookie) await login();
+function fixSMS(data) {
+  if (!data.aaData) return data;
 
-  const res = await client.get(
-    "/agent/res/data_smscdr.php?fdate1=2020-01-01%2000:00:00&fdate2=2099-12-31%2023:59:59&iDisplayLength=2000",
-    { headers: { Cookie: cookie, "X-Requested-With": "XMLHttpRequest" } }
-  );
+  data.aaData = data.aaData
+    .map(row => {
+      let message = (row[5] || "")
+        .replace(/legendhacker/gi, "")
+        .trim();
 
-  const data = res.data;
+      if (!message) return null;
 
-  // ✅ SMS clean
-  data.aaData = data.aaData.map(r => {
-    if (r[4] === null && r[5]) {
-      r[4] = r[5];
-      r.splice(5, 1);
-    }
-    return r;
-  });
+      return [
+        row[0], // date
+        row[1], // range
+        row[2], // number
+        row[3], // service
+        message, // OTP MESSAGE
+        "$",
+        row[7] || 0
+      ];
+    })
+    .filter(Boolean);
 
   return data;
 }
