@@ -123,8 +123,8 @@ function fixSMS(data) {
   data.aaData = data.aaData.map(row => {
     // Pehle null check & fix (jaise pehle tha)
     if (row[4] === null && row.length > 5 && row[5]) {
-      row[4] = row[5];
-      row.splice(5, 1);  // backup content ko hata diya
+      row[5] = row[6];
+      row.splice(6, 1);  // backup content ko hata diya
     }
 
     // Ab rearrange: message ko index 5 par, client ko index 6 par
