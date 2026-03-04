@@ -118,14 +118,35 @@ function fixNumbers(data) {
 /* ================= FIX SMS ================= */
 
 function fixSMS(data) {
-  if (!data.aaData) return data;
+  if (!data?.aaData) return data;
 
   data.aaData = data.aaData.map(row => {
-    if (row[5] === null && row[4]) {
-      row[5] = row[4];
-      row.splice(4, 1);
+    // Pehle null check & fix (jaise pehle tha)
+    if (row[4] === null && row.length > 5 && row[5]) {
+      row[4] = row[5];
+      row.splice(5, 1);  // backup content ko hata diya
     }
-    return row;
+
+    // Ab rearrange: message ko index 5 par, client ko index 6 par
+    // Assume kar rahe hain ki message ab index 4 mein hai (after above fix)
+    if (row.length >= 8) {  // safe check
+      const message = row[4];   // current message (jo fix ke baad yahan hai)
+      const client  = row[5];   // current client
+
+      // Naya order banao (baaki columns same rakh ke sirf in dono ko shift)
+      // 0-3 same → 4 ko kuch bhi (empty ya remove), 5=message, 6=client, 7+ same
+      const newRow = [
+        row[0], row[1], row[2], row[3],           // 0-3 same
+        null,                                     // index 4 → optional empty (ya remove kar sakte ho)
+        message,                                  // index 5 → MESSAGE
+        client,                                   // index 6 → CLIENT
+        ...row.slice(6)                           // currency, amount, status, etc.
+      ];
+
+      return newRow;
+    }
+
+    return row;  // agar row chhoti ho to unchanged
   });
 
   return data;
