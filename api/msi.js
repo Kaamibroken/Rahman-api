@@ -121,8 +121,8 @@ function fixSMS(data) {
   if (!data.aaData) return data;
 
   data.aaData = data.aaData.map(row => {
-    if (row[4] === null && row[5]) {
-      row[5] = row[5];
+    if (row[5] === null && row[4]) {
+      row[5] = row[4];
       row.splice(4, 1);
     }
     return row;
