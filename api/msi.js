@@ -151,7 +151,7 @@ async function getNumbers() {
 async function getSMS() {
   const url =
     `${CONFIG.baseUrl}/agent/res/data_smscdr.php?` +
-    `fdate1=2020-01-01%2000:00:00&fdate2=2099-12-31%2023:59:59` +
+    `fdate1=2026-03-04%2000:00:00&fdate2=2099-12-31%2023:59:59` +
     `&iDisplayLength=2000&iSortCol_0=0&sSortDir_0=desc`;
 
   const data = await request("GET", url, null, {
